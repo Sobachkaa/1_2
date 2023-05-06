@@ -1,16 +1,53 @@
-# В фермерском хозяйстве в Карелии выращивают чернику. Она растёт на круглой грядке, причём кусты высажены только по окружности. Таким образом, у каждого куста есть ровно два соседних. Всего на грядке растёт N кустов.
-# Эти кусты обладают разной урожайностью, поэтому ко времени сбора на них выросло различное число ягод — на i-ом кусте выросло ai ягод.
-# В этом фермерском хозяйстве внедрена система автоматического сбора черники. Эта система состоит из управляющего модуля и нескольких собирающих модулей. Собирающий модуль за один заход, находясь непосредственно перед некоторым кустом, собирает ягоды с этого куста и с двух соседних с ним.
-# Напишите программу для нахождения максимального числа ягод, которое может собрать за один заход собирающий модуль, находясь перед некоторым кустом заданной во входном файле грядки.
-n = int(input("Введите количество кустов: "))
 
-berries = list(map(int, input("Введите количество ягод на каждом кусте через пробел: ").split()))
+M = {1,3,7,10,15,24,36,58,62,100}
 
-max_sum = 0
+# отношение R
+R = [(x,y) for x in M for y in M if x <= y]
+print("Отношение R:", R)
 
-for i in range(n):
-    sum_berries = berries[i] + berries[(i+1)%n] + berries[(i+2)%n]  # сумма ягод с текущего, следующего и через один куста
-    if sum_berries > max_sum:
-        max_sum = sum_berries
+# матрица отношения R
+R_matrix = [[1 if (i,j) in R else 0 for j in M] for i in M]
+print("Матрица отношения R:")
+for row in R_matrix:
+    print(row)
 
-print("Максимальное число ягод, которое может собрать собирающий модуль за один заход:", max_sum)
+# матрица противоположного отношения
+not_R = [(x,y) for x in M for y in M if x > y]
+not_R_matrix = [[1 if (i,j) in not_R else 0 for j in M] for i in M]
+print("Матрица противоположного отношения:")
+for row in not_R_matrix:
+    print(row)
+
+# матрица обратного отношения
+R_inv = [(y,x) for (x,y) in R]
+R_inv_matrix = [[1 if (i,j) in R_inv else 0 for j in M] for i in M]
+print("Матрица обратного отношения:")
+for row in R_inv_matrix:
+    print(row)
+
+# матрица составного отношения
+R_comp = [(x,z) for (x,y1) in R for (y2,z) in R if y1 == y2]
+R_comp_matrix = [[1 if (i,j) in R_comp else 0 for j in M] for i in M]
+print("Матрица составного отношения:")
+for row in R_comp_matrix:
+    print(row)
+
+# матрица транзитивного замыкания
+R_trans = R.copy()
+for (x,y1) in R:
+    for (y2,z) in R:
+        if y1 == y2:
+            R_trans.append((x,z))
+R_trans_matrix = [[1 if (i,j) in R_trans else 0 for j in M] for i in M]
+print("Матрица транзитивного замыкания:")
+for row in R_trans_matrix:
+    print(row)
+
+# матрица рефлексивного замыкания
+R_refl = R.copy()
+for x in M:
+    R_refl.append((x,x))
+R_refl_matrix = [[1 if (i,j) in R_refl else 0 for j in M] for i in M]
+print("Матрица рефлексивного замыкания:")
+for row in R_refl_matrix:
+    print(row)
